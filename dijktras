@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+#define V 100 // Maximum number of vertices
+
+int graph[V][V];
+int dist[V];
+int prev[V];
+bool visited[V];
+
+int getMinDistanceVertex(int n) {
+    int minDist = INT_MAX;
+    int minVertex = -1;
+
+    for (int v = 0; v < n; v++) {
+        if (!visited[v] && dist[v] < minDist) {
+            minDist = dist[v];
+            minVertex = v;
+        }
+    }
+
+    return minVertex;
+}
+
+void Dijkstra(int source, int n) {
+    for (int v = 0; v < n; v++) {
+        dist[v] = INT_MAX;
+        prev[v] = -1;
+        visited[v] = false;
+    }
+
+    dist[source] = 0;
+
+    for (int i = 0; i < n - 1; i++) {
+        int u = getMinDistanceVertex(n);
+        visited[u] = true;
+
+        for (int v = 0; v < n; v++) {
+            if (!visited[v] && graph[u][v] != 0 && dist[u] != INT_MAX &&
+                dist[u] + graph[u][v] < dist[v]) {
+                dist[v] = dist[u] + graph[u][v];
+                prev[v] = u;
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m; // Number of vertices and edges
+
+    printf("Enter the number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &m);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            graph[i][j] = 0; // Initialize the graph with 0 weights
+        }
+    }
+
+    for (int i = 0; i < m; i++) {
+        int u, v, w; // Edge from u to v with weight w
+        printf("Enter edge %d (u v w): ", i + 1);
+        scanf("%d %d %d", &u, &v, &w);
+        graph[u][v] = w;
+    }
+
+    int source;
+    printf("Enter the source vertex: ");
+    scanf("%d", &source);
+
+    Dijkstra(source, n);
+
+    printf("Shortest distances from vertex %d:\n", source);
+    for (int i = 0; i < n; i++) {
+        printf("Vertex %d: %d\n", i, dist[i]);
+    }
+
+    return 0;
+}
