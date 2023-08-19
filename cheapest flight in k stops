@@ -1,0 +1,25 @@
+class Solution:
+    def findCheapestPrice(self, n: int, flights: List[List[int]], src: int, dst: int, k: int) -> int:
+        adjList = defaultdict(list)
+        for flight in flights:
+            adjList[flight[0]].append(flight[1:])
+
+        cost = [inf] * n
+        cost[src] = 0
+        q = deque([(src, cost[src])])
+        steps = -1
+        while steps < k and len(q):
+            size = len(q)
+            print(q)
+            while size:
+                curr, curr_cost = q.popleft()
+                for nei, path_cost in adjList[curr]:
+                    if curr_cost + path_cost < cost[nei]:
+                        q.append((nei, curr_cost + path_cost))
+                        cost[nei] = curr_cost + path_cost
+                size -= 1
+            steps += 1
+        
+        if cost[dst] != inf:
+            return cost[dst]
+        return -1
